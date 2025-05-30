@@ -1,4 +1,5 @@
 // app.js
+
 require('dotenv').config();
 const express       = require('express');
 const helmet        = require('helmet');
@@ -8,7 +9,10 @@ const cookieParser  = require('cookie-parser');
 
 const userRoutes    = require('./routes/userRoutes');
 const authRoutes    = require('./routes/authRoutes');
-const apiRoutes = require('./routes/apiRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const newsletterRoutes = require('./routes/newsletterRoutes');
+const packageRoutes = require('./routes/packageRoutes');
+const adminLogRouter = require('./routes/adminLogRoutes');
 
 const app = express();
 
@@ -20,7 +24,9 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
 app.use('/api/auth',  authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api', apiRoutes);
+app.use('api/orders', orderRoutes);
+app.use('api/newsletters', newsletterRoutes);
+app.use('api/packages', packageRoutes);
+app.use('api/adminLogs', adminLogRouter);
 
-// Export for testing
 module.exports = app;

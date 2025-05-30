@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
-const checkRole = require('../middleware/roleMiddleware');
+const { checkRole } = require('../middleware/roleMiddleware');
 
 const contactCtrl = require('../controllers/contactController');
 const blogCtrl = require('../controllers/blogController');
@@ -10,7 +10,7 @@ const newsletterCtrl = require('../controllers/newsletterController');
 const eventCtrl = require('../controllers/eventController');
 
 // Public contact
-router.post('/contacts', contactCtrl.saveContact);
+router.post('/contacts', contactCtrl.saveContact);``
 router.get('/contacts', contactCtrl.getContacts);
 router.put('/contacts/:id', contactCtrl.updateContact);
 

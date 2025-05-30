@@ -11,7 +11,9 @@
     "testEnvironment": "node",
     "collectCoverage": true,
     "coverageDirectory": "coverage",
-    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ]
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -20,6 +22,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
+    "google-auth-library": "^9.15.1",
     "helmet": "^6.0.1",
     "ioredis": "^5.6.1",
     "jsonwebtoken": "^8.5.1",

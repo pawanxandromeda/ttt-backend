@@ -1,13 +1,18 @@
-// controllers/authController.js
-const jwt        = require('jsonwebtoken');
+// Updated authController.js
+const jwt = require('jsonwebtoken');
 const { v4: uuid } = require('uuid');
-const model      = require('../models/userModel');
-const sessions   = require('../services/sessionService');
-const redis      = require('../config/redis');
+const model = require('../models/userModel');
+const sessions = require('../services/sessionService');
+const redis = require('../config/redis');
+const bcrypt = require('bcrypt');
+const { OAuth2Client } = require('google-auth-library');
 require('dotenv').config();
 
-const JWT_SECRET     = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+
 if (!JWT_SECRET || !REFRESH_SECRET) {
   throw new Error('Missing JWT_SECRET or REFRESH_SECRET in environment');
 }
@@ -17,9 +22,10 @@ exports.login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await model.getUserByUsername(username);
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+    if (!user || user.oauth_provider !== 'local')
+      return res.status(401).json({ message: 'Invalid credentials' });
 
-    const match = await require('bcrypt').compare(password, user.password);
+    const match = await bcrypt.compare(password, user.password_hash);
     if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
     const jti = uuid();
@@ -40,13 +46,64 @@ exports.login = async (req, res, next) => {
     res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure:   true,
+        secure: true,
         sameSite: 'Strict',
-        maxAge:   7 * 24 * 60 * 60 * 1000,
+        maxAge: 60 * 60 * 1000,
       })
       .json({ accessToken, expiresIn: 900, jti });
   } catch (err) {
     next(err);
+  }
+};
+
+// ─── GOOGLE LOGIN ───────────────────────────────────────────────────
+exports.googleLogin = async (req, res, next) => {
+  try {
+    const { idToken } = req.body;
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, sub: providerId, name } = payload;
+
+    let user = await model.getUserByOAuthId('google', providerId);
+    if (!user) {
+      user = await model.createUserFromOAuth({
+        email,
+        name,
+        provider: 'google',
+        providerId,
+      });
+    }
+
+    const jti = uuid();
+    const accessToken = jwt.sign(
+      { sub: user.id, role: user.role, jti },
+      JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+    const refreshToken = jwt.sign(
+      { sub: user.id, role: user.role },
+      REFRESH_SECRET,
+      { expiresIn: '60m' }
+    );
+
+    await sessions.createSession(refreshToken, { sub: user.id, role: user.role });
+
+    res
+      .cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+        maxAge: 60 * 60 * 1000,
+      })
+      .json({ accessToken, expiresIn: 900, jti });
+  } catch (err) {
+    console.error('[GOOGLE LOGIN ERROR]', err);
+    res.status(401).json({ error: 'Invalid Google token' });
   }
 };
 
@@ -83,7 +140,6 @@ exports.refresh = async (req, res, next) => {
 // ─── LOGOUT ─────────────────────────────────────────────────────────
 exports.logout = async (req, res, next) => {
   try {
-    // 1) destroy refresh-session & clear cookie
     const refreshToken = req.cookies.refreshToken;
     if (refreshToken) {
       console.log(`[LOGOUT] destroying refresh session for token=${refreshToken.slice(0,10)}…`);
@@ -93,7 +149,6 @@ exports.logout = async (req, res, next) => {
       console.log('[LOGOUT] no refreshToken cookie present');
     }
 
-    // 2) blacklist the access token JTI
     const auth = req.header('Authorization') || '';
     if (auth.startsWith('Bearer ')) {
       const token = auth.slice(7);
@@ -105,17 +160,13 @@ exports.logout = async (req, res, next) => {
         return res.status(400).end();
       }
       const { jti, exp } = payload;
-      console.log(`[LOGOUT] decoded access token jti=${jti}, exp=${exp}`);
       if (jti && exp) {
         const now = Math.floor(Date.now() / 1000);
         const ttl = exp - now;
-        console.log(`[LOGOUT] blacklisting jti=${jti} for ttl=${ttl}s`);
         if (ttl > 0) {
           await redis.set(`bl:${jti}`, '1', 'EX', ttl);
         }
       }
-    } else {
-      console.log('[LOGOUT] no Authorization header');
     }
 
     res.status(204).end();
