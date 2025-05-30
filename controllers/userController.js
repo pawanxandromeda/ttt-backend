@@ -5,12 +5,13 @@ require('dotenv').config();
 
 exports.register = async (req, res, next) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password } = req.body;
+    console.log("username, ", username, " and password, ", password, " and email, ", email)
     if (!username || !email || !password) {
       return res.status(400).json({ message: 'Username, email, and password are required' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await model.createUser({ username, email, passwordHash: hashedPassword, role });
+    const user = await model.createUser( username, email, hashedPassword );
     res.status(201).json({ id: user.id, username: user.username, email: user.email, role: user.role });
   } catch (err) {
     if (err.code === '23505') {

@@ -17,16 +17,19 @@ const adminLogRouter = require('./routes/adminLogRoutes');
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: '*' }));
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+  }));  
 app.use(express.json());
 app.use(cookieParser());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
 app.use('/api/auth',  authRoutes);
 app.use('/api/users', userRoutes);
-app.use('api/orders', orderRoutes);
-app.use('api/newsletters', newsletterRoutes);
-app.use('api/packages', packageRoutes);
-app.use('api/adminLogs', adminLogRouter);
+app.use('/api/orders', orderRoutes);
+app.use('/api/newsletters', newsletterRoutes);
+app.use('/api/packages', packageRoutes);
+app.use('/api/adminLogs', adminLogRouter);
 
 module.exports = app;

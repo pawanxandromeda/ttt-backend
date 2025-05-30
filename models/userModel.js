@@ -6,18 +6,17 @@ const bcrypt = require('bcrypt');
 /**
  * Create a user with hashed password
  * @param {string} username
+ * @param {string} email
  * @param {string} password
  * @param {'user'|'admin'} [role]
  * @returns {Promise<User>}
  */
-const createUser = async (username, password, role = 'user') => {
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const email = `${username}@example.com`;
+const createUser = async ( username, email, password) => {
   const res = await pool.query(
     `INSERT INTO users (username, email, password_hash, role, oauth_provider)
      VALUES ($1, $2, $3, $4, 'local')
      RETURNING id, username, email, role`,
-    [username, email, hashedPassword, role]
+    [username, email, password, 'user']
   );
   return res.rows[0];
 };
