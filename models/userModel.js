@@ -11,7 +11,7 @@ const bcrypt = require('bcrypt');
  * @param {'user'|'admin'} [role]
  * @returns {Promise<User>}
  */
-const createUser = async ( username, email, password) => {
+const createUser = async ( username, email, password ) => {
   const res = await pool.query(
     `INSERT INTO users (username, email, password_hash, role, oauth_provider)
      VALUES ($1, $2, $3, $4, 'local')

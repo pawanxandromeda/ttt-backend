@@ -7,12 +7,12 @@ const authMiddleware = require('../middleware/authMiddleware')
 const { checkRole, isSelf } = require('../middleware/roleMiddleware')
 
 // Subscribe
-router.post('/newsletter', newsletterController.subscribe);
+router.post('/', newsletterController.subscribe);
 
 // Get all subscriptions (admin)
-router.get('/newsletter', authMiddleware, checkRole('admin'), newsletterController.getAll);
+router.get('/', authMiddleware, checkRole('admin'), newsletterController.getAll);
 
 // Verify or unsubscribe with token
-router.get('/newsletter/verify/:token', isSelf('id'), newsletterController.verifyOrUnsubscribe);
+router.get('/verify/:token', isSelf('id'), newsletterController.verifyOrUnsubscribe);
 
 module.exports = router;

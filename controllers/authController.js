@@ -22,20 +22,10 @@ exports.login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await model.getUserByUsername(username);
-    console.log("user is: ", user);
     if (!user || user.oauth_provider !== "local")
       return res.status(401).json({ message: "Invalid credentials" });
 
-    const testpassword = "password";
-    console.log(password);
-    console.log(user.password_hash);
-
-    const hash = await bcrypt.hash(testpassword, 10);
-    const testmatch = await bcrypt.compare(password, hash);
-    console.log("match:", testmatch); // true
-
     const match = await bcrypt.compare(password, user.password_hash);
-    console.log("match is: ", match);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
     const jti = uuid();

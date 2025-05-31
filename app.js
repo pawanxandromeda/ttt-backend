@@ -9,6 +9,7 @@ const cookieParser  = require('cookie-parser');
 
 const userRoutes    = require('./routes/userRoutes');
 const authRoutes    = require('./routes/authRoutes');
+const contactRoutes = require('./routes/contactRoutes')
 const orderRoutes = require('./routes/orderRoutes');
 const newsletterRoutes = require('./routes/newsletterRoutes');
 const packageRoutes = require('./routes/packageRoutes');
@@ -27,6 +28,7 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
 app.use('/api/auth',  authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/contacts', contactRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/newsletters', newsletterRoutes);
 app.use('/api/packages', packageRoutes);
