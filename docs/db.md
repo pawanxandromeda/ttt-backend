@@ -70,6 +70,54 @@ CREATE TABLE packages (
 - **package_registration_deadline**: If set, users must register for that package by this time; otherwise, event’s `registration_deadline` applies.
 - **created_at / updated_at**: Audit timestamps.
 
+- **Additional updation required**: 
+```sql
+  -- 1. Enforce package_type ↔ event_id consistency
+ALTER TABLE packages
+  ADD CONSTRAINT chk_package_type_event
+    CHECK (
+      (package_type = 'subscription' AND event_id IS NULL)
+      OR (package_type = 'event' AND event_id IS NOT NULL)
+    );
+
+-- 2. Add deactivated_at column (already assumed in model)
+ALTER TABLE packages
+  ADD COLUMN deactivated_at TIMESTAMP NULL;
+
+-- 3. Index on event_id + is_active for fast lookups
+CREATE INDEX idx_packages_event_active
+  ON packages(event_id)
+  WHERE is_active = TRUE;
+
+-- 4. Index on package_type if you filter often by subscription vs. event
+CREATE INDEX idx_packages_type
+  ON packages(package_type);
+
+-- 5. Unique index on slug (already assumed)
+-- (If not already present)
+CREATE UNIQUE INDEX idx_packages_slug_unique
+  ON packages(slug);
+
+-- 6. If you want to enforce a composite uniqueness of (event_id, slug):
+--    e.g., two events can both have a "VIP" ticket, but a single event cannot.
+CREATE UNIQUE INDEX idx_packages_event_slug
+  ON packages(event_id, slug)
+  WHERE event_id IS NOT NULL;
+
+-- 7. (Optional) Create materialized view for capacity status if needed:
+--    (Helps answer “how many seats remain” quickly.)
+CREATE MATERIALIZED VIEW package_capacity_status AS
+  SELECT
+    p.id AS package_id,
+    p.capacity,
+    COUNT(er.*) FILTER (WHERE er.status = 'registered') AS registered_count,
+    (p.capacity - COUNT(er.*) FILTER (WHERE er.status = 'registered')) AS seats_remaining
+  FROM packages p
+  LEFT JOIN event_registrations er ON er.package_id = p.id
+  WHERE p.package_type = 'event' 
+  GROUP BY p.id, p.capacity;
+```
+
 ### 2.3. `orders`
 **Stores:** Payment transactions (both subscription purchases and event ticket sales).
 ```sql
