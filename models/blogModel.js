@@ -15,14 +15,16 @@ async function createBlog(data) {
     summary = null,
     content = null,
     media_cid = null,
+    status = null,
+    published_at = null
   } = data;
   const res = await pool.query(
     `
-    INSERT INTO blogs (author_id, title, slug, summary, content, media_cid)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO blogs (author_id, title, slug, summary, content, media_cid, status, published_at)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING *;
   `,
-    [author_id, title, slug, summary, content, media_cid]
+    [author_id, title, slug, summary, content, media_cid, status, published_at]
   );
   return res.rows[0];
 }
@@ -87,7 +89,7 @@ async function getBlogById(id, { admin = false } = {}) {
  */
 async function getBlogByField(field, value, { admin = false } = {}) {
   // Whitelist valid fields to prevent SQL injection
-  const validFields = ['id', 'slug', 'author_id'];
+  const validFields = ['id', 'slug', 'author_id', 'status'];
   if (!validFields.includes(field)) {
     throw new Error(`Invalid field: ${field}`);
   }

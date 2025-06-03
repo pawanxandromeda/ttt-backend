@@ -6,7 +6,7 @@ const blogModel = require('../models/blogModel');
  */
 async function createBlog(req, res) {
   try {
-    const { author_id, title, slug, summary, content, media_cid } = req.body;
+    const { author_id, title, slug, summary, content, media_cid, status, published_at } = req.body;
     const newBlog = await blogModel.createBlog({
       author_id,
       title,
@@ -14,6 +14,8 @@ async function createBlog(req, res) {
       summary,
       content,
       media_cid,
+      status,
+      published_at
     });
     res.status(201).json(newBlog);
   } catch (err) {
@@ -42,7 +44,7 @@ async function getAllBlogs(req, res) {
 async function getBlogById(req, res) {
   try {
     const { id } = req.params;
-    const admin = !!req.isAdmin;
+    const admin = req.user.role=='admin' ? true : false;
     const blog = await blogModel.getBlogById(id, { admin });
     if (!blog) {
       return res.status(404).json({ error: 'Blog not found or not published.' });
@@ -66,7 +68,7 @@ async function getBlogByField(req, res) {
         .status(400)
         .json({ error: 'Query parameters "field" and "value" are required.' });
     }
-    const admin = !!req.isAdmin;
+    const admin = req.user.role=='admin' ? true : false;
     const blogs = await blogModel.getBlogByField(field, value, { admin });
     res.json(blogs);
   } catch (err) {

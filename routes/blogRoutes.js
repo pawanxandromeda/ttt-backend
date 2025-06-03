@@ -16,8 +16,21 @@ router.post('/', authMiddleware, checkRole('admin'), blogController.createBlog);
  * @route GET /blogs
  * @desc Get all blogs (admin only, includes drafts/archived)
  * @access Admin
- */
+*/
 router.get('/', authMiddleware, checkRole('admin'), blogController.getAllBlogs);
+
+/**
+ * @route GET /blogs/search?field=slug&value=some-slug
+ * @desc Get blogs by arbitrary field (slug or author_id)
+ * @access Public (published) or Admin
+ */
+router.get('/search', (req, res, next) => {
+    const auth = req.header('Authorization') || '';
+    if (auth.startsWith('Bearer ')) {
+      return authMiddleware(req, res, next);
+    }
+    next();
+  }, blogController.getBlogByField);
 
 /**
  * @route GET /blogs/public
@@ -38,19 +51,6 @@ router.get('/:id', (req, res, next) => {
     }
     next();
   }, blogController.getBlogById);
-
-/**
- * @route GET /blogs/search?field=slug&value=some-slug
- * @desc Get blogs by arbitrary field (slug or author_id)
- * @access Public (published) or Admin
- */
-router.get('/search', (req, res, next) => {
-    const auth = req.header('Authorization') || '';
-    if (auth.startsWith('Bearer ')) {
-      return authMiddleware(req, res, next);
-    }
-    next();
-  }, blogController.getBlogByField);
 
 /**
  * @route PUT /blogs/:id
