@@ -114,10 +114,34 @@ async function reactivateEvent(req, res) {
   }
 }
 
+/**
+ * Get events by arbitrary fields (admin) or only published for public.
+ */
+async function getEventsByField(req, res) {
+  try {
+    const filters = { ...req.query };
+
+    if (req.user && req.user.role === 'admin') {
+      // Admin: allow any allowed filters from query
+      const events = await eventModel.getEvents(filters);
+      return res.json(events);
+    } else {
+      // Public: always force status = 'published'
+      const publicFilters = { ...req.query, status: 'published' };
+      const events = await eventModel.getEvents(publicFilters);
+      return res.json(events);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch events.' });
+  }
+}
+
 module.exports = {
   createEvent,
   getEventsByStatus,
   updateEvent,
   batchUpdateEvents,
   reactivateEvent,
+  getEventsByField
 };

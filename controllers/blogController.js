@@ -68,7 +68,7 @@ async function getBlogByField(req, res) {
         .status(400)
         .json({ error: 'Query parameters "field" and "value" are required.' });
     }
-    const admin = req.user.role=='admin' ? true : false;
+    const admin = req.user?.role=='admin' ? true : false;
     const blogs = await blogModel.getBlogByField(field, value, { admin });
     res.json(blogs);
   } catch (err) {

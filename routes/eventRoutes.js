@@ -71,4 +71,12 @@ router.put(
   eventController.reactivateEvent
 );
 
+router.get('/search', (req, res, next) => {
+  const auth = req.header('Authorization') || '';
+  if (auth.startsWith('Bearer ')) {
+    return authMiddleware(req, res, next);
+  }
+  next();
+}, eventController.getEventsByField); // <-- new controller here
+
 module.exports = router;

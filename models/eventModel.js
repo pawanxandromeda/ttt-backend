@@ -184,11 +184,57 @@ async function getPublishedEvents() {
   return res.rows;
 }
 
+/**
+ * Get events by arbitrary filters (object with column:value).
+ * Only allows whitelisted columns.
+ * @param {Object} filters - e.g. { status: 'published', title: 'Event Title' }
+ * @returns {Promise<Event[]>}
+ */
+async function getEvents(filters = {}) {
+  const allowedFields = [
+    'status',
+    'title',
+    'slug',
+    'location',
+    'start_time',
+    'end_time',
+    'created_by',
+    'registration_deadline',
+    'payment_required',
+    'id',
+    // Add more fields as needed
+  ];
+
+  const where = [];
+  const values = [];
+  let idx = 1;
+
+  for (const key of allowedFields) {
+    if (filters[key] !== undefined) {
+      where.push(`${key} = $${idx++}`);
+      values.push(filters[key]);
+    }
+  }
+
+  // Always exclude soft-deleted by default
+  where.push('deleted_at IS NULL');
+
+  const sql = `
+    SELECT * FROM events
+    ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
+    ORDER BY start_time ASC
+  `;
+
+  const res = await pool.query(sql, values);
+  return res.rows;
+}
+
 module.exports = {
   createEvent,
   getEventsByStatus,
   updateEvent,
   batchUpdateEvents,
   reactivateEvent,
-  getPublishedEvents
+  getPublishedEvents,
+  getEvents
 };
