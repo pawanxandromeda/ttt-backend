@@ -18,6 +18,7 @@ const adminLogRouter = require('./routes/adminLogRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const registrationRoutes = require('./routes/registrationRoutes');
+const ipfsRoutes = require('./routes/ipfsRoutes');
 
 const app = express();
 
@@ -41,6 +42,8 @@ app.use('/api/adminLogs', adminLogRouter);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/registrations', registrationRoutes);
+app.use('/api/ipfs', ipfsRoutes);
+
 
 // Error handling & 404
 app.use((req, res) => {
