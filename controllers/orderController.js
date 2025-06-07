@@ -1,4 +1,6 @@
 /** @typedef {import('../types/types').Order} Order */
+const { createRazorpayOrder } = require('../services/razorpayService');
+const crypto = require('crypto');
 
 const {
     createOrder,
@@ -52,6 +54,50 @@ const {
   
       const updated = await updatePaymentStatus(req.params.id, status);
       res.json(updated);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  exports.createRazorpayOrder = async (req, res, next) => {
+    try {
+      const { package_id, amount } = req.body;
+      const user_id = req.user.id;
+      const receipt = `${user_id}_${package_id}_${Date.now()}`;
+      const order = await createRazorpayOrder({
+        amount: Math.round(Number(amount) * 100), // Convert to paise
+        receipt,
+      });
+      res.json(order);
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+  exports.verifyRazorpayPayment = async (req, res, next) => {
+    try {
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature, package_id, amount } = req.body;
+  
+      // Verify signature
+      const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+      hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+      const generated_signature = hmac.digest("hex");
+      if (generated_signature !== razorpay_signature) {
+        return res.status(400).json({ message: "Invalid signature." });
+      }
+  
+      // Payment verified - Save order
+      const order = await createOrder({
+        user_id: req.user.id,
+        package_id,
+        payment_gateway: 'razorpay',
+        payment_id: razorpay_payment_id,
+        amount_paid: Number(amount),
+        currency: 'INR',
+        payment_status: 'paid'
+      });
+  
+      res.status(201).json({ success: true, order });
     } catch (err) {
       next(err);
     }

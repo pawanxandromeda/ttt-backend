@@ -6,8 +6,12 @@ const orderController = require('../controllers/orderController');
 const authMiddleware = require('../middleware/authMiddleware')
 const { checkRole, isSelfOrAdmin } = require('../middleware/roleMiddleware')
 
-// Create a new order (public or authenticated)
-router.post('/', authMiddleware, orderController.saveOrder);
+// Razorpay payment creation
+router.post('/create-order', authMiddleware, orderController.createRazorpayOrder);
+
+// Razorpay payment verification (client-side callback)
+router.post('/verify', authMiddleware, orderController.verifyRazorpayPayment);
+
 
 // Get all orders (admin)
 router.get('/', authMiddleware, checkRole('admin'), orderController.getOrders);
