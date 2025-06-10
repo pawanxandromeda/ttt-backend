@@ -6,7 +6,6 @@ const sessions = require("../services/sessionService");
 const redis = require("../config/redis");
 const bcrypt = require("bcrypt");
 const { OAuth2Client } = require("google-auth-library");
-require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
@@ -24,10 +23,10 @@ exports.login = async (req, res, next) => {
     const user = await model.getUserByUsername(username);
     if (!user || user.oauth_provider !== "local")
       return res.status(401).json({ message: "Invalid credentials" });
-
+    
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
-
+    
     const jti = uuid();
     const accessToken = jwt.sign(
       { sub: user.id, role: user.role, jti },
@@ -39,21 +38,21 @@ exports.login = async (req, res, next) => {
       REFRESH_SECRET,
       { expiresIn: "60m" }
     );
-
+    
     await sessions.createSession(refreshToken, {
       sub: user.id,
       role: user.role,
     });
-
+    
     console.log(`[LOGIN] user=${user.username} jti=${jti}`);
     res
-      .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Strict",
-        maxAge: 60 * 60 * 1000,
-      })
-      .json({ accessToken, expiresIn: 900, jti });
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 60 * 60 * 1000,
+    })
+    .json({ accessToken, expiresIn: 900, jti });
   } catch (err) {
     next(err);
   }
@@ -63,7 +62,7 @@ exports.login = async (req, res, next) => {
 exports.googleLogin = async (req, res, next) => {
   try {
     const { idToken } = req.body;
-
+    
     const ticket = await googleClient.verifyIdToken({
       idToken,
       audience: GOOGLE_CLIENT_ID,
