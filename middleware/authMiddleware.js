@@ -1,7 +1,7 @@
 // middleware/authMiddleware.js
 const jwt   = require('jsonwebtoken');
 const redis = require('../config/redis');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error('Missing JWT_SECRET in environment');

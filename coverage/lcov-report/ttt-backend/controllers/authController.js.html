@@ -319,7 +319,7 @@ const { v4: uuid } = require('uuid');
 const model      = require('../models/userModel');
 const sessions   = require('../services/sessionService');
 const redis      = require('../config/redis');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 &nbsp;
 const JWT_SECRET     = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;

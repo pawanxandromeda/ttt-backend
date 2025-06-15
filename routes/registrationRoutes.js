@@ -10,7 +10,7 @@ const { checkRole, isSelf } = require('../middleware/roleMiddleware');
  * @desc Create a new registration
  * @access Public (or authenticated)
  */
-router.post('/', authMiddleware, checkRole('admin'), registrationController.createRegistration);
+router.post('/', registrationController.createRegistration);
 
 /**
  * @route GET /registrations

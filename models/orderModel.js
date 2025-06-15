@@ -14,7 +14,7 @@ async function createOrder(orderData) {
     user_id,
     package_id,
     payment_gateway = 'razorpay',
-    payment_id,
+    payment_id = null,
     amount_paid,
     currency = 'INR',
     payment_status,

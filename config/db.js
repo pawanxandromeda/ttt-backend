@@ -1,6 +1,6 @@
 // config/db.js
 const { Pool } = require('pg');
-require('dotenv').config();
+require('dotenv').config({path: '.env.local'});
 
 // const isTest = process.env.NODE_ENV === 'test';
 const pool = new Pool({

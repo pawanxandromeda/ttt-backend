@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // scripts/setupTestDB.js
 
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 const { Pool } = require('pg');
 
 (async () => {

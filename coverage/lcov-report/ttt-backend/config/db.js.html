@@ -97,7 +97,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span></td><td class="text"><pre class="prettyprint lang-js">// config/db.js
 const { Pool } = require('pg');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 &nbsp;
 // const isTest = process.env.NODE_ENV === 'test';
 const pool = new Pool({

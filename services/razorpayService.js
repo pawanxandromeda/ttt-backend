@@ -5,14 +5,9 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-/**
- * Create Razorpay Order
- * @param {number} amount - Amount in INR paise (e.g. 50000 = ₹500)
- * @param {string} currency - Default: INR
- * @param {string} receipt - Order ID or description
- */
-function createRazorpayOrder({ amount, currency = 'INR', receipt }) {
-  return razorpay.orders.create({
+async function createRazorpayOrderDetails({ amount, currency = 'INR', receipt }) {
+  console.log("Razor client: ", razorpay)
+  return await razorpay.orders.create({
     amount, // in paise
     currency,
     receipt,
@@ -20,4 +15,4 @@ function createRazorpayOrder({ amount, currency = 'INR', receipt }) {
   });
 }
 
-module.exports = { createRazorpayOrder };
+module.exports = { createRazorpayOrderDetails };

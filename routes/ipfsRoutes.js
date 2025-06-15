@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const { create } = require('ipfs-http-client');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();

@@ -1,7 +1,7 @@
 // userController.js
 const model = require('../models/userModel');
 const bcrypt = require('bcrypt');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 
 exports.register = async (req, res, next) => {
   try {

@@ -3,15 +3,14 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
-const authMiddleware = require('../middleware/authMiddleware')
-const { checkRole, isSelfOrAdmin } = require('../middleware/roleMiddleware')
+const authMiddleware = require('../middleware/authMiddleware');
+const { checkRole, isSelfOrAdmin } = require('../middleware/roleMiddleware');
 
-// Razorpay payment creation
+// Razorpay payment creation (user buy)
 router.post('/create-order', authMiddleware, orderController.createRazorpayOrder);
 
 // Razorpay payment verification (client-side callback)
 router.post('/verify', authMiddleware, orderController.verifyRazorpayPayment);
-
 
 // Get all orders (admin)
 router.get('/', authMiddleware, checkRole('admin'), orderController.getOrders);
