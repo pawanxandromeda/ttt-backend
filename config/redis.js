@@ -13,11 +13,8 @@ if (process.env.NODE_ENV === 'test') {
   };
 } else {
   // Real Redis client
-  redis = new Redis({
-    host: process.env.REDIS_HOST || '127.0.0.1',
-    port: process.env.REDIS_PORT || 6379,
-    password: process.env.REDIS_PASSWORD || undefined,
-  });
+redis = new Redis(process.env.REDIS_URL);
+
 }
 
 module.exports = redis;
