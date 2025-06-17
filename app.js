@@ -1,15 +1,14 @@
-// app.js
-
-const express       = require('express');
-const helmet        = require('helmet');
-const cors          = require('cors');
-const rateLimit     = require('express-rate-limit');
-const cookieParser  = require('cookie-parser');
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-const userRoutes    = require('./routes/userRoutes');
-const authRoutes    = require('./routes/authRoutes');
-const contactRoutes = require('./routes/contactRoutes')
+// Route imports
+const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const newsletterRoutes = require('./routes/newsletterRoutes');
 const packageRoutes = require('./routes/packageRoutes');
@@ -21,6 +20,18 @@ const ipfsRoutes = require('./routes/ipfsRoutes');
 
 const app = express();
 
+// --- ✅ CORS Configuration ---
+const corsOptions = {
+  origin: 'https://ttt-ui-iota.vercel.app', // Your frontend URL
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions)); // Enable CORS
+app.options('*', cors(corsOptions)); // Handle preflight OPTIONS requests
+
+// --- Middlewares ---
 app.use(helmet());
 app.use(cors({
     origin: 'https://ttt-ui-iota.vercel.app',
@@ -31,7 +42,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
-app.use('/api/auth',  authRoutes);
+// --- API Routes ---
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/orders', orderRoutes);
@@ -43,11 +55,9 @@ app.use('/api/events', eventRoutes);
 app.use('/api/registrations', registrationRoutes);
 app.use('/api/ipfs', ipfsRoutes);
 
-
-// Error handling & 404
+// --- 404 Handler ---
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });
 });
-
 
 module.exports = app;
