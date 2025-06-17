@@ -23,7 +23,7 @@ const app = express();
 
 app.use(helmet());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://ttt-ui-iota.vercel.app',
     credentials: true
   }));  
 app.use(express.json());
