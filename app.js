@@ -34,7 +34,7 @@ app.options('*', cors(corsOptions)); // Handle preflight OPTIONS requests
 // --- Middlewares ---
 app.use(helmet());
 app.use(cors({
-    origin: 'https://ttt-ui-iota.vercel.app',
+    origin: 'https://www.teenytechtrek.com',
     credentials: true
   }));  
 app.use(express.json());
