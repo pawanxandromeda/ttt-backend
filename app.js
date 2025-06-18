@@ -22,7 +22,7 @@ const app = express();
 
 // --- ✅ CORS Configuration ---
 const corsOptions = {
-  origin: 'https://ttt-ui-iota.vercel.app', // Your frontend URL
+  origin: 'https://www.teenytechtrek.com', // Your frontend URL
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
