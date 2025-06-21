@@ -5,18 +5,24 @@ const {
   getAllOrders,
   getOrderById,
   updateOrder,
-  updatePaymentStatus,
+  updatePaymentStatus
 } = require('../models/orderModel');
 
-// Create Razorpay order and local DB order (status: pending)
+// CREATE a Razorpay order and a local DB order with status 'pending'
 exports.createRazorpayOrder = async (req, res, next) => {
   try {
-    const { package_id, amount, attendee_email, scheduled_date_time } = req.body;
+    const { package_id, amount } = req.body;
+    // Extract user id from JWT middleware (adjust property if needed)
+    const user_id = req.user.sub;
 
-    const user_id = req.user?.sub;
-    if (!user_id) return res.status(401).json({ error: 'Unauthorized: missing user_id' });
-    if (!package_id || !amount) return res.status(400).json({ error: 'Missing package_id or amount' });
+    if (!user_id) {
+      return res.status(401).json({ error: 'Unauthorized: missing user_id' });
+    }
+    if (!package_id || !amount) {
+      return res.status(400).json({ error: 'Missing package_id or amount' });
+    }
 
+    // 1. Create pending order in your DB
     const dbOrder = await createOrder({
       user_id,
       package_id,
@@ -24,70 +30,69 @@ exports.createRazorpayOrder = async (req, res, next) => {
       payment_id: null,
       amount_paid: amount,
       currency: 'INR',
-      payment_status: 'pending',
+      payment_status: 'pending'
     });
 
     const receipt = dbOrder.id;
-
+    // 2. Create Razorpay order
     let razorpayOrder;
     try {
       razorpayOrder = await createRazorpayOrderDetails({
-        amount: Math.round(Number(amount) * 100),
+        amount: Math.round(Number(amount) * 100), // INR to paise
         receipt,
       });
-    } catch (err) {
-      console.error('Razorpay creation error:', err);
-      return res.status(500).json({ error: 'Razorpay order creation failed' });
+      console.log("razorpayOrder created:", JSON.stringify(razorpayOrder, null, 2));
+    } catch (e) {
+      console.error("Error creating Razorpay order:", e && typeof e === 'object'
+        ? JSON.stringify(e, Object.getOwnPropertyNames(e))
+        : e);
+      return res.status(500).json({ error: "Razorpay order creation failed", details: e });
     }
 
-    res.status(200).json({
+    // 3. Send both IDs to frontend
+    res.json({
       razorpayOrderId: razorpayOrder.id,
       dbOrderId: dbOrder.id,
-      amount,
-      currency: 'INR',
+      amount: amount,
+      currency: 'INR'
     });
   } catch (err) {
-    console.error('Create Razorpay order error:', err);
     next(err);
   }
 };
 
-// Verify Razorpay payment and update DB
+// VERIFY Razorpay payment and update DB order
 exports.verifyRazorpayPayment = async (req, res, next) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      db_order_id,
-    } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, db_order_id } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !db_order_id) {
-      return res.status(400).json({ message: 'Missing payment verification parameters.' });
+      return res.status(400).json({ message: "Missing payment verification parameters." });
     }
 
-    const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
-    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const generated_signature = hmac.digest('hex');
+    // Signature verification
+    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+    hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+    const generated_signature = hmac.digest("hex");
 
     if (generated_signature !== razorpay_signature) {
       await updatePaymentStatus(db_order_id, 'failed');
-      return res.status(400).json({ message: 'Invalid signature.' });
+      return res.status(400).json({ message: "Invalid signature." });
     }
 
+    // Mark order as paid and update payment ID
     await updateOrder(db_order_id, {
       payment_id: razorpay_payment_id,
-      payment_status: 'paid',
+      payment_status: 'paid'
     });
 
     res.status(200).json({ success: true });
   } catch (err) {
-    console.error('Payment verification error:', err);
     next(err);
   }
 };
 
-// Admin-only or fallback
+// Create order manually (admin/other uses)
 exports.saveOrder = async (req, res, next) => {
   try {
     const saved = await createOrder(req.body);
