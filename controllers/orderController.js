@@ -11,53 +11,44 @@ const {
 // CREATE a Razorpay order and a local DB order with status 'pending'
 exports.createRazorpayOrder = async (req, res, next) => {
   try {
+    console.log("🔹 Incoming payload:", req.body);
     const { package_id, amount } = req.body;
-    // Extract user id from JWT middleware (adjust property if needed)
-    const user_id = req.user.sub;
 
-    if (!user_id) {
-      return res.status(401).json({ error: 'Unauthorized: missing user_id' });
-    }
-    if (!package_id || !amount) {
-      return res.status(400).json({ error: 'Missing package_id or amount' });
-    }
+    const user_id = req.user?.sub;
+    console.log("🔹 User ID from token:", user_id);
 
-    // 1. Create pending order in your DB
+    if (!user_id) return res.status(401).json({ error: 'Unauthorized: missing user_id' });
+    if (!package_id || !amount) return res.status(400).json({ error: 'Missing package_id or amount' });
+
     const dbOrder = await createOrder({
       user_id,
       package_id,
       payment_gateway: 'razorpay',
       payment_id: null,
-      amount_paid: amount,
+      amount_paid: Number(amount),
       currency: 'INR',
-      payment_status: 'pending'
+      payment_status: 'pending',
     });
 
     const receipt = dbOrder.id;
-    // 2. Create Razorpay order
-    let razorpayOrder;
-    try {
-      razorpayOrder = await createRazorpayOrderDetails({
-        amount: Math.round(Number(amount) * 100), // INR to paise
-        receipt,
-      });
-      console.log("razorpayOrder created:", JSON.stringify(razorpayOrder, null, 2));
-    } catch (e) {
-      console.error("Error creating Razorpay order:", e && typeof e === 'object'
-        ? JSON.stringify(e, Object.getOwnPropertyNames(e))
-        : e);
-      return res.status(500).json({ error: "Razorpay order creation failed", details: e });
-    }
+    console.log("🔹 Order saved to DB. Receipt:", receipt);
 
-    // 3. Send both IDs to frontend
+    const razorpayOrder = await createRazorpayOrderDetails({
+      amount: Math.round(Number(amount) * 100),
+      receipt,
+    });
+
+    console.log("✅ Razorpay order created:", razorpayOrder);
+
     res.json({
       razorpayOrderId: razorpayOrder.id,
       dbOrderId: dbOrder.id,
       amount: amount,
-      currency: 'INR'
+      currency: 'INR',
     });
   } catch (err) {
-    next(err);
+    console.error("❌ Error in createRazorpayOrder:", err.message, err.stack);
+    res.status(500).json({ error: "Internal Server Error", details: err.message });
   }
 };
 
