@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const serviceAccount = require('../ttt-calemder.json'); // Your service account file
+const serviceAccount = require('../service-account-key.json'); // Your service account file
 
 // Initialize Google Calendar API
 const calendar = google.calendar('v3');
