@@ -1,6 +1,5 @@
+// controllers/calendarController.js
 const { google } = require('googleapis');
-
-const calendar = google.calendar('v3');
 
 const auth = new google.auth.JWT(
   process.env.GOOGLE_CLIENT_EMAIL,
@@ -8,11 +7,12 @@ const auth = new google.auth.JWT(
   process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
   ['https://www.googleapis.com/auth/calendar']
 );
-// Endpoint to create calendar event
-app.post('/calendar/create-event', async (req, res) => {
+
+const calendar = google.calendar('v3');
+
+exports.createCalendarEvent = async (req, res) => {
   try {
     const {
-      packageId,
       startDateTime,
       endDateTime,
       attendeeEmail,
@@ -20,34 +20,26 @@ app.post('/calendar/create-event', async (req, res) => {
       description
     } = req.body;
 
-    // Create event
     const event = {
       summary,
       description,
-      start: {
-        dateTime: startDateTime,
-        timeZone: 'Asia/Kolkata', // IST
-      },
-      end: {
-        dateTime: endDateTime,
-        timeZone: 'Asia/Kolkata',
-      },
+      start: { dateTime: startDateTime, timeZone: 'Asia/Kolkata' },
+      end: { dateTime: endDateTime, timeZone: 'Asia/Kolkata' },
       attendees: [{ email: attendeeEmail }],
       reminders: {
         useDefault: false,
         overrides: [
-          { method: 'email', minutes: 24 * 60 }, // 1 day before
-          { method: 'popup', minutes: 30 }, // 30 minutes before
+          { method: 'email', minutes: 24 * 60 },
+          { method: 'popup', minutes: 30 },
         ],
       },
     };
 
-    // Insert event into primary calendar
     const response = await calendar.events.insert({
       auth,
-      calendarId: 'primary', // Or a specific calendar ID
+      calendarId: 'primary',
       resource: event,
-      sendUpdates: 'all', // Sends notifications to attendees
+      sendUpdates: 'all',
     });
 
     res.status(200).json({
@@ -56,11 +48,11 @@ app.post('/calendar/create-event', async (req, res) => {
       message: 'Event created successfully',
     });
   } catch (error) {
-    console.error('Error creating calendar event:', error);
+    console.error('Google Calendar error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create calendar event',
       error: error.message,
     });
   }
-});
+};
