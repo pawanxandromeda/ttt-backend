@@ -1,16 +1,13 @@
 const { google } = require('googleapis');
-const serviceAccount = require('../service-account-key.json'); // Your service account file
 
-// Initialize Google Calendar API
 const calendar = google.calendar('v3');
-const auth = new google.auth.JWT(
-  serviceAccount.client_email,
-  null,
-  serviceAccount.private_key,
-  ['https://www.googleapis.com/auth/calendar'],
-  null
-);
 
+const auth = new google.auth.JWT(
+  process.env.GOOGLE_CLIENT_EMAIL,
+  null,
+  process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  ['https://www.googleapis.com/auth/calendar']
+);
 // Endpoint to create calendar event
 app.post('/calendar/create-event', async (req, res) => {
   try {
