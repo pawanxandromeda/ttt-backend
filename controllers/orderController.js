@@ -24,7 +24,7 @@ exports.createRazorpayOrder = async (req, res, next) => {
       user_id,
       package_id,
       payment_gateway: 'razorpay',
-      payment_id: null,
+      payment_id: '',
       amount_paid: Number(amount),
       currency: 'INR',
       payment_status: 'pending',
