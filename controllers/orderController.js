@@ -20,15 +20,15 @@ exports.createRazorpayOrder = async (req, res, next) => {
     if (!user_id) return res.status(401).json({ error: 'Unauthorized: missing user_id' });
     if (!package_id || !amount) return res.status(400).json({ error: 'Missing package_id or amount' });
 
-    const dbOrder = await createOrder({
-      user_id,
-      package_id,
-      payment_gateway: 'razorpay',
-      payment_id: '',
-      amount_paid: Number(amount),
-      currency: 'INR',
-      payment_status: 'pending',
-    });
+    // const dbOrder = await createOrder({
+    //   user_id,
+    //   package_id,
+    //   payment_gateway: 'razorpay',
+    //   payment_id: '',
+    //   amount_paid: Number(amount),
+    //   currency: 'INR',
+    //   payment_status: 'pending',
+    // });
 
     const receipt = dbOrder.id;
     console.log("🔹 Order saved to DB. Receipt:", receipt);
