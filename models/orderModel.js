@@ -18,19 +18,44 @@ async function createOrder(orderData) {
     amount_paid,
     currency = 'INR',
     payment_status,
-    access_expires_at = null
+    access_expires_at // optional
   } = orderData;
 
-  const res = await pool.query(
-    `INSERT INTO orders (
-      user_id, package_id, payment_gateway,
-      payment_id, amount_paid, currency,
-      payment_status, access_expires_at
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    RETURNING *`,
-    [user_id, package_id, payment_gateway, payment_id, amount_paid, currency, payment_status, access_expires_at]
-  );
+  const hasAccessExpiry = access_expires_at !== undefined && access_expires_at !== null;
 
+  const columns = [
+    'user_id',
+    'package_id',
+    'payment_gateway',
+    'payment_id',
+    'amount_paid',
+    'currency',
+    'payment_status'
+  ];
+  const placeholders = ['$1', '$2', '$3', '$4', '$5', '$6', '$7'];
+  const values = [
+    user_id,
+    package_id,
+    payment_gateway,
+    payment_id,
+    Number(amount_paid),
+    currency,
+    payment_status
+  ];
+
+  if (hasAccessExpiry) {
+    columns.push('access_expires_at');
+    placeholders.push(`$${placeholders.length + 1}`);
+    values.push(access_expires_at);
+  }
+
+  const query = `
+    INSERT INTO orders (${columns.join(', ')})
+    VALUES (${placeholders.join(', ')})
+    RETURNING *
+  `;
+
+  const res = await pool.query(query, values);
   return res.rows[0];
 }
 
