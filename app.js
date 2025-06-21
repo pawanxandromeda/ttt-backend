@@ -17,7 +17,7 @@ const blogRoutes = require('./routes/blogRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const registrationRoutes = require('./routes/registrationRoutes');
 const ipfsRoutes = require('./routes/ipfsRoutes');
-
+const calendarRoutes= require('./routes/calenderRoutes');
 const app = express();
 
 // --- ✅ CORS Configuration ---
@@ -54,6 +54,7 @@ app.use('/api/blogs', blogRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/registrations', registrationRoutes);
 app.use('/api/ipfs', ipfsRoutes);
+app.use('/api/calendar', calendarRoutes); 
 
 // --- 404 Handler ---
 app.use((req, res) => {
