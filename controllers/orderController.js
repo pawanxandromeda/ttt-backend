@@ -13,7 +13,8 @@ export const createRazorpayOrder = async (req, res) => {
     const razorpayOrder = await razorpay.orders.create({
       amount: amount * 100, // convert to paise
       currency: "INR",
-      receipt: `${package_id}-${Date.now()}`,
+     receipt: `pkg-${Date.now()}`
+,
     });
 
     res.json({
