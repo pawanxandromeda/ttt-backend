@@ -30,8 +30,15 @@ exports.createRazorpayOrder = async (req, res, next) => {
       currency: 'INR',
     });
   } catch (err) {
-    console.error("❌ Error in createRazorpayOrder:", err.message, err.stack);
-    res.status(500).json({ error: "Internal Server Error", details: err.message });
+    console.error("❌ Error in createRazorpayOrder:", {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    });
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: err.message || 'Unknown error occurred',
+    });
   }
 };
 
@@ -53,13 +60,20 @@ exports.verifyRazorpayPayment = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid signature." });
     }
 
-    res.status(200).json({ 
+    res.status(200).json({
       success: true,
       payment_id: razorpay_payment_id,
-      order_id: razorpay_order_id
+      order_id: razorpay_order_id,
     });
   } catch (err) {
-    console.error("❌ Error in verifyRazorpayPayment:", err.message, err.stack);
-    res.status(500).json({ error: "Internal Server Error", details: err.message });
+    console.error("❌ Error in verifyRazorpayPayment:", {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    });
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: err.message || 'Unknown error occurred',
+    });
   }
 };
