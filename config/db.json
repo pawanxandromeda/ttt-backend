@@ -1,0 +1,194 @@
+{
+  "opening_message": "👋 Welcome to Teeny Tech Trek! Empowering small teams with big ideas through custom AI solutions. How can we help you today?",
+  "quick_selection_prompt": {
+    "message": "Thank you for reaching out to Teeny Tech Trek! For faster assistance, please select your primary area of interest:\n\n- AI Chatbots & Virtual Assistants\n- Agentic AI Workflows\n- Smart Process Automation\n- Lightweight AI Apps & Micro-SaaS\n\nOr reply 'CONTACT' to receive our direct contact details.",
+    "contact": {
+      "email": "anisha.singla@teenytechtrek.com",
+      "phone_india": "+91 9855806696",
+      "phone_canada": "+1 647-864-5465",
+      "website": "https://www.teenytechtrek.com"
+    }
+  },
+  "qa": [
+    {
+      "variations": [
+        "what exactly does your company do",
+        "tell me about teeny tech trek",
+        "what's the focus of your company",
+        "can you explain your company briefly",
+        "who is teeny tech trek"
+      ],
+      "answer": "Teeny Tech Trek is a boutique AI solutions studio that builds intelligent, scalable AI systems, focusing on automation, AI agents, and practical AI integrations tailored for small teams."
+    },
+    {
+      "variations": [
+        "what services do you offer",
+        "explain your main services",
+        "what kind of ai solutions can you provide",
+        "list your core ai services",
+        "what are your primary offerings"
+      ],
+      "answer": "We offer AI-powered Chatbots, Agentic AI Workflows, Smart Process Automation, and Lightweight AI Apps & Micro-SaaS Tools customized to small teams’ needs."
+    },
+    {
+      "variations": [
+        "can you help with chatbot development",
+        "what type of chatbots do you build",
+        "do you create virtual assistants",
+        "explain your chatbot services",
+        "how can your ai chatbots help my business"
+      ],
+      "answer": "Yes, we build custom AI chatbots and virtual assistants that integrate with platforms like Slack, Discord, and CRMs to streamline customer support, onboarding, and internal knowledge management."
+    },
+    {
+      "variations": [
+        "what's an agentic ai workflow",
+        "do you offer automated ai workflows",
+        "can you automate complex business tasks",
+        "explain your autonomous agent services",
+        "how do your agentic workflows work"
+      ],
+      "answer": "Agentic AI workflows autonomously handle complex tasks like data retrieval, analysis, summarization, and executing multi-step processes using technologies such as LangChain and CrewAI."
+    },
+    {
+      "variations": [
+        "what kind of automation do you offer",
+        "can you automate repetitive business tasks",
+        "do you provide workflow automation",
+        "how does your smart process automation service help businesses",
+        "what automation tools do you use"
+      ],
+      "answer": "We streamline operations by automating repetitive tasks like CRM updates, email management, and data synchronization using Python, Zapier, and Make."
+    },
+    {
+      "variations": [
+        "what type of ai apps do you develop",
+        "explain your micro-saas development services",
+        "can you build quick mvps",
+        "what frameworks do you use for mvps",
+        "why choose your lightweight ai app development"
+      ],
+      "answer": "We rapidly develop lightweight AI-powered MVPs and internal tools using frameworks like Streamlit, Chainlit, and FastAPI, ideal for quickly validating concepts and scaling."
+    },
+    {
+      "variations": [
+        "how much do your services cost",
+        "what's your pricing structure",
+        "explain your engagement models",
+        "can you detail your pricing packages",
+        "do you offer flexible pricing options"
+      ],
+      "answer": "We offer flexible pricing: Starter Strategy Calls (₹1,200/45 mins), AI Readiness Audits (₹2,100/90 mins), and Custom AI Implementation tailored to your business needs."
+    },
+    {
+      "variations": [
+        "how can i schedule a consultation",
+        "can i speak with someone directly",
+        "what's the best way to discuss my project",
+        "how do i book a call",
+        "can i get an initial strategy session"
+      ],
+      "answer": "You can schedule a consultation through our website’s 'Book a Consultation' option."
+    },
+    {
+      "variations": [
+        "what's your company's vision",
+        "explain your core belief",
+        "what's your mission statement",
+        "why do you focus on small teams",
+        "what's the philosophy behind your services"
+      ],
+      "answer": "We believe lean teams empowered by intelligent AI solutions can achieve big impacts, simplifying complexity to help businesses innovate and grow rapidly."
+    },
+    {
+      "variations": [
+        "what technologies do you use",
+        "what's your technical stack",
+        "can you detail your technology expertise",
+        "what tools and platforms do you specialize in",
+        "explain your technology competencies"
+      ],
+      "answer": "Our stack includes MERN, React, .NET, FastAPI, Python, TensorFlow, AWS, Docker, Kubernetes, and databases like MongoDB and PostgreSQL."
+    },
+    {
+      "variations": [
+        "which industries do you serve",
+        "are your solutions industry-specific",
+        "can you work across different industries",
+        "who typically benefits from your services",
+        "do you specialize in certain sectors"
+      ],
+      "answer": "Our solutions are industry-agnostic, empowering startups, product teams, and solopreneurs in various sectors with custom AI integrations tailored to their needs."
+    },
+    {
+      "variations": [
+        "how collaborative is your approach",
+        "describe your innovation process",
+        "what's your working style",
+        "do you integrate closely with client teams",
+        "how do you ensure innovation"
+      ],
+      "answer": "We emphasize true collaboration, clear communication, and innovative, customized AI solutions designed specifically to align with your business goals and team workflows."
+    },
+    {
+      "variations": [
+        "how quickly can you deploy ai solutions",
+        "what's your project timeline like",
+        "explain your delivery speed",
+        "how soon can i see results",
+        "what's your turnaround time for mvps"
+      ],
+      "answer": "We deliver rapid MVPs and workflows quickly, ensuring thoughtful execution to help you see measurable impacts within weeks, not months."
+    },
+    {
+      "variations": [
+        "where are you based",
+        "what's your office location",
+        "how can i reach you directly",
+        "what's your contact information",
+        "provide your company contact details"
+      ],
+      "answer": "We operate globally; contact us directly at anisha.singla@teenytechtrek.com or call +91 9855806696 or +1 647-864-5465 for immediate assistance."
+    },
+    {
+      "variations": [
+        "can you assist with unrelated tech issues",
+        "do you offer general tech support",
+        "can you help me with unrelated software",
+        "can you fix hardware problems",
+        "do you handle non-ai related tasks"
+      ],
+      "answer": "That’s currently beyond my expertise, but I encourage you to drop your query through our contact form so our team can assist further."
+    },
+    {
+      "variations": [
+        "how do you handle data privacy"
+      ],
+      "answer": "We prioritize ethical AI practices and rigorous data privacy measures to ensure compliance and security in every solution."
+    },
+    {
+      "variations": [
+        "can your solutions integrate with our existing software"
+      ],
+      "answer": "Yes, our AI solutions seamlessly integrate with platforms like Slack, Notion, CRMs, and other common business tools."
+    },
+    {
+      "variations": [
+        "are your ai solutions scalable as my business grows"
+      ],
+      "answer": "Absolutely; we design all our AI systems to scale smartly, adapting smoothly as your business expands."
+    },
+    {
+      "variations": [
+        "do you provide post-launch support"
+      ],
+      "answer": "Yes, ongoing support and maintenance are integral to our custom AI implementation services."
+    },
+    {
+      "variations": [
+        "can your solutions be customized for unique business needs"
+      ],
+      "answer": "Certainly. Every solution we build is custom-crafted specifically to address your unique business objectives."
+    }
+  ]
+}

@@ -18,6 +18,9 @@ const eventRoutes = require('./routes/eventRoutes');
 const registrationRoutes = require('./routes/registrationRoutes');
 const ipfsRoutes = require('./routes/ipfsRoutes');
 const calendarRoutes= require('./routes/calenderRoutes');
+const chatbotRoutes = require("./routes/chatbotRoutes");
+
+const bookingRoutes = require("./routes/booking");
 const app = express();
 
 // --- ✅ CORS Configuration ---
@@ -55,7 +58,8 @@ app.use('/api/events', eventRoutes);
 app.use('/api/registrations', registrationRoutes);
 app.use('/api/ipfs', ipfsRoutes);
 app.use('/api/calendar', calendarRoutes); 
-
+app.use("/api", chatbotRoutes);
+app.use("/api", bookingRoutes);
 // --- 404 Handler ---
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });
