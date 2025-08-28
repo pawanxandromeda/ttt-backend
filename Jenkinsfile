@@ -12,7 +12,6 @@ pipeline {
             }
         }
 
-
         stage('Build Docker Images') {
             steps {
                 sh 'docker-compose build'
@@ -21,8 +20,11 @@ pipeline {
 
         stage('Run Docker Containers') {
             steps {
-                sh 'docker-compose down'
-                sh 'docker-compose up -d'
+                sh '''
+                    docker-compose down --remove-orphans || true
+                    docker rm -f pg17 redis || true
+                    docker-compose up -d
+                '''
             }
         }
 
@@ -35,7 +37,7 @@ pipeline {
 
     post {
         always {
-            sh 'docker-compose down'
+            sh 'docker-compose down --remove-orphans || true'
         }
     }
 }
