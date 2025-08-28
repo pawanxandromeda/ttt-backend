@@ -20,7 +20,7 @@ const ipfsRoutes = require('./routes/ipfsRoutes');
 const calendarRoutes= require('./routes/calenderRoutes');
 const chatbotRoutes = require("./routes/chatbotRoutes");
 
-const bookingRoutes = require("./routes/booking");
+const bookingRoutes = require("./routes/bookingRoutes");
 const app = express();
 
 // --- ✅ CORS Configuration ---

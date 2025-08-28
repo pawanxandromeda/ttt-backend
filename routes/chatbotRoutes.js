@@ -4,4 +4,4 @@ const { handleChat } = require("../controllers/chatbotController");
 
 router.post("/chat", handleChat);
 
-module.exports = router; // ✅ not an object
+module.exports = router; // ✅ export only the router
