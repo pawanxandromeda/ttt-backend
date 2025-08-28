@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { handleChat } = require("../controllers/chatbotcontroller");
+
+// Must match the exact file name: chatbotController.js
+const { handleChat } = require("../controllers/chatbotController");
 
 router.post("/chat", handleChat);
 
