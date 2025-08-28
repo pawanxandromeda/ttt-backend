@@ -23,6 +23,7 @@ pipeline {
                 sh '''
                     docker-compose down --remove-orphans || true
                     docker rm -f pg17 redis || true
+                    export COMPOSE_HTTP_TIMEOUT=200
                     docker-compose up -d
                 '''
             }
